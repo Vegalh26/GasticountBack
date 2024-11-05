@@ -30,10 +30,4 @@ public class Grupo {
     @Enumerated(EnumType.STRING)
     @Column(name="moneda", nullable=false)
     private Moneda moneda;
-
-    // Relación de uno a muchos con la tabla participantes
-    // (un grupo puede tener muchos participantes / un participante solo puede pertenecer a un grupo)
-    @OneToMany(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
-    @JoinColumn(name="id_grupo")
-    private Set<Participante> participantes;
 }
