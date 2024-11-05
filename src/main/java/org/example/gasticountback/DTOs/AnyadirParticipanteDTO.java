@@ -6,4 +6,6 @@ import lombok.Data;
 public class AnyadirParticipanteDTO {
     private Integer id;
     private String nombre;
+    private Integer grupoId;
+    private String concepto;
 }

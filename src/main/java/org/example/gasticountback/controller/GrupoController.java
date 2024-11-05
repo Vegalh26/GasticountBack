@@ -1,13 +1,11 @@
 package org.example.gasticountback.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.gasticountback.DTOs.AnyadirParticipanteDTO;
 import org.example.gasticountback.DTOs.GrupoCrearDTO;
 import org.example.gasticountback.DTOs.GrupoListarDTO;
-import org.example.gasticountback.entity.Grupo;
-import org.example.gasticountback.enumerar.Moneda;
 import org.example.gasticountback.service.GrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +27,21 @@ public class GrupoController {
             return null;
         }
     }
+
+
+    @PutMapping("/{grupoId}/participantes/{participanteId}")
+    public AnyadirParticipanteDTO anyadirParticipante(@PathVariable Integer grupoId, @PathVariable Integer participanteId) {
+        AnyadirParticipanteDTO participante = grupoService.anyadirParticipanteGrupo(grupoId, participanteId);
+        if (participante != null) {
+            return participante;
+        } else {
+            return null;
+        }
+    }
+
+
+
+
 
     @GetMapping("/{idUsuario}")
     public List<GrupoListarDTO> listarGrupos(@PathVariable Integer idUsuario) {
