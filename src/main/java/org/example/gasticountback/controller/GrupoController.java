@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.gasticountback.DTOs.AnyadirParticipanteDTO;
 import org.example.gasticountback.DTOs.GrupoCrearDTO;
 import org.example.gasticountback.DTOs.GrupoListarDTO;
+import org.example.gasticountback.DTOs.ParticipantesListarDTO;
 import org.example.gasticountback.service.GrupoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +40,16 @@ public class GrupoController {
         }
     }
 
+
+    @GetMapping("/{grupoId}/participantes")
+    public List<ParticipantesListarDTO> verParticipantesGrupo(@PathVariable Integer grupoId) {
+        List<ParticipantesListarDTO> participantes = grupoService.verParticipantesGrupo(grupoId);
+        if (participantes != null) {
+            return participantes;
+        } else {
+            return null;
+        }
+    }
 
 
 

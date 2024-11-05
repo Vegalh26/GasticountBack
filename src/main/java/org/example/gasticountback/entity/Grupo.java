@@ -30,4 +30,7 @@ public class Grupo {
     @Enumerated(EnumType.STRING)
     @Column(name="moneda", nullable=false)
     private Moneda moneda;
+
+    @OneToMany(mappedBy="grupo", fetch=FetchType.LAZY)
+    private Set<Participante> participantes;
 }

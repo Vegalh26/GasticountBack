@@ -3,6 +3,7 @@ package org.example.gasticountback.service;
 import org.example.gasticountback.DTOs.AnyadirParticipanteDTO;
 import org.example.gasticountback.DTOs.GrupoCrearDTO;
 import org.example.gasticountback.DTOs.GrupoListarDTO;
+import org.example.gasticountback.DTOs.ParticipantesListarDTO;
 import org.example.gasticountback.entity.Grupo;
 import org.example.gasticountback.entity.Participante;
 import org.example.gasticountback.entity.Usuario;
@@ -66,7 +67,24 @@ public class GrupoService implements IGrupoService {
     }
 
 
+    public List<ParticipantesListarDTO> verParticipantesGrupo(Integer idGrupo) {
+        Grupo grupo = grupoRepository.findById(idGrupo).orElse(null);
+        if (grupo != null) {
+            Set<Participante> participantes = grupo.getParticipantes();
+            List<ParticipantesListarDTO> participantesListarDTOS = new ArrayList<>();
 
+            for (Participante participante : participantes) {
+                ParticipantesListarDTO participantesListarDTO = new ParticipantesListarDTO();
+                participantesListarDTO.setConcepto(grupo.getConcepto());
+                participantesListarDTO.setNombreParticipante(participante.getNombre());
+                participantesListarDTOS.add(participantesListarDTO);
+            }
+
+            return participantesListarDTOS;
+        } else {
+            return null;
+        }
+    }
 
 
     @Override
