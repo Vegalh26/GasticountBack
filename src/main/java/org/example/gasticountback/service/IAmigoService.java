@@ -1,9 +1,9 @@
 package org.example.gasticountback.service;
 
-import org.example.gasticountback.entity.Amigo;
+import org.example.gasticountback.DTOs.AmigosListarDTO;
 
 import java.util.List;
 
 public interface IAmigoService {
-    List<Amigo> findAmigos(Integer idUsuario);
+    List<AmigosListarDTO> findAmigos(Integer idUsuario);
 }

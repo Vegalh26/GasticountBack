@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -64,5 +65,5 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "grupo_id")
     )
-    private Set<Grupo> grupos;
+    private List<Grupo> grupos;
 }

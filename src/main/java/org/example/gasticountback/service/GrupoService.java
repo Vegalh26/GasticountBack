@@ -1,13 +1,12 @@
 package org.example.gasticountback.service;
 
-import org.example.gasticountback.DTOs.AnyadirParticipanteDTO;
-import org.example.gasticountback.DTOs.GrupoCrearDTO;
-import org.example.gasticountback.DTOs.GrupoListarDTO;
-import org.example.gasticountback.DTOs.ParticipantesListarDTO;
+import org.example.gasticountback.DTOs.*;
+import org.example.gasticountback.entity.Gasto;
 import org.example.gasticountback.entity.Grupo;
 import org.example.gasticountback.entity.Participante;
 import org.example.gasticountback.entity.Usuario;
 import org.example.gasticountback.enumerar.Moneda;
+import org.example.gasticountback.repository.IGastoRepository;
 import org.example.gasticountback.repository.IGrupoRepository;
 import org.example.gasticountback.repository.IParticipanteRepository;
 import org.example.gasticountback.repository.IUsuarioRepository;
@@ -29,6 +28,9 @@ public class GrupoService implements IGrupoService {
 
     @Autowired
     private IParticipanteRepository participanteRepository;
+
+    @Autowired
+    private IGastoRepository gastoRepository;
 
     @Override
     public GrupoCrearDTO saveGrupo(GrupoCrearDTO grupoCrearDTO) {
@@ -87,12 +89,29 @@ public class GrupoService implements IGrupoService {
     }
 
 
+    public List<ParticipantesListarDTO> eliminarParticipantesGrupo(EliminarParticipanteDTO eliminarParticipanteDTO) {
+        Integer idGrupo = eliminarParticipanteDTO.getGrupoId();
+        Integer idParticipante = eliminarParticipanteDTO.getParticipanteId();
+
+        Grupo grupo = grupoRepository.findById(idGrupo).orElse(null);
+        Participante participante = participanteRepository.findById(idParticipante).orElse(null);
+
+        if (grupo != null && participante != null && participante.getGrupo().equals(grupo)) {
+            participante.setGrupo(null);
+            participanteRepository.save(participante);
+            System.out.println("Participante eliminado: ID = " + participante.getId() + ", Nombre = " + participante.getNombre() + ", Grupo = " + grupo.getConcepto());
+        }
+
+        return verParticipantesGrupo(idGrupo);
+    }
+
+
     @Override
     public List<GrupoListarDTO> findGrupos(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario);
         if (usuario != null) {
-            Set<Grupo> grupos = usuario.getGrupos();
-            List<GrupoListarDTO> grupoListarDTOS = new ArrayList<>();
+            List<Grupo> grupos = usuario.getGrupos();
+            List<GrupoListarDTO> grupoListarDTOS = new ArrayList<GrupoListarDTO>();
 
             for (Grupo grupo : grupos) {
                 GrupoListarDTO grupoListarDTO = new GrupoListarDTO();

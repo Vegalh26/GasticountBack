@@ -38,6 +38,12 @@ public class Gasto {
     // Relación de muchos a uno con la tabla participantes
     // (un gasto solo puede tener un participante / un participante puede tener muchos gastos)
     @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, targetEntity = Participante.class)
-    @JoinColumn(name="id_participante", referencedColumnName = "id", insertable = false, updatable = false)
+    @JoinColumn(name="id_participante", referencedColumnName = "id")
     private Participante participante;
+
+    //Relación de muchos a uno con la tabla grupos
+    // (un gasto solo puede tener un grupo / un grupo puede tener muchos gastos)
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, targetEntity = Grupo.class)
+    @JoinColumn(name="id_grupo", referencedColumnName = "id")
+    private Grupo grupo;
 }
