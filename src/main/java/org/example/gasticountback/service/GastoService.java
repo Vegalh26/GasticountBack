@@ -2,6 +2,7 @@ package org.example.gasticountback.service;
 
 import org.example.gasticountback.DTOs.AnyadirGastoDTO;
 import org.example.gasticountback.DTOs.GastosListarDTO;
+import org.example.gasticountback.entity.Balance;
 import org.example.gasticountback.entity.Gasto;
 import org.example.gasticountback.entity.Grupo;
 import org.example.gasticountback.entity.Participante;
@@ -67,6 +68,43 @@ public class GastoService {
             return verGastos(gasto.getGrupo().getId());
         } else {
             return null;
+        }
+    }
+
+
+    public void repartoGastos(Integer grupoId) {
+        List<Gasto> gastos = gastoRepository.findByGrupoId(grupoId);
+        List<Participante> participantes = participanteRepository.findByGrupoId(grupoId);
+
+        Double totalGastos = 0.0;
+        for (Gasto gasto : gastos) {
+            totalGastos += gasto.getPrecio();
+        }
+        System.out.println("Total gastos: " + totalGastos);
+
+        for (Participante participante : participantes) {
+            Double totalGastosParticipante = 0.0;
+            for (Gasto gasto : gastos) {
+                if (gasto.getParticipante().getId().equals(participante.getId())) {
+                    totalGastosParticipante += gasto.getPrecio();
+                }
+            }
+            System.out.println("Total gastos participante " + participante.getNombre() + ": " + totalGastosParticipante);
+
+            Double balanceTotal = totalGastosParticipante - (totalGastos / participantes.size());
+            Balance balance = new Balance();
+            balance.setTotal(balanceTotal);
+            balance.setGrupo(grupoRepository.findById(grupoId).orElse(null));
+
+            if (balanceTotal < 0) {
+                balance.setParticipantesDebe(List.of(participante));
+            } else if (balanceTotal > 0) {
+                balance.setParticipantesRecibe(List.of(participante));
+            }
+
+            balanceRepository.save(balance);
+
+            System.out.println("Balance insertado: id: " + balance.getId() + " / total: " + balance.getTotal());
         }
     }
 }

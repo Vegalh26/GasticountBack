@@ -32,4 +32,10 @@ public class GastoController {
     public List<GastosListarDTO> anyadirGastoGrupo(@RequestBody AnyadirGastoDTO anyadirGastoDTO) {
         return gastoService.anyadirGastoGrupo(anyadirGastoDTO);
     }
+
+
+    @GetMapping("/balance/{grupoId}")
+    public void repartoGastos(@PathVariable Integer grupoId) {
+        gastoService.repartoGastos(grupoId);
+    }
 }
