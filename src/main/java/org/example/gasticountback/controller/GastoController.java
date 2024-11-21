@@ -34,8 +34,4 @@ public class GastoController {
     }
 
 
-    @GetMapping("/balance/{grupoId}")
-    public void repartoGastos(@PathVariable Integer grupoId) {
-        gastoService.repartoGastos(grupoId);
-    }
 }

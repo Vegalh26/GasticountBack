@@ -16,6 +16,16 @@ public class GrupoController {
     @Autowired
     private GrupoService grupoService;
 
+    @GetMapping("/detalles/{grupoId}")
+    public GrupoListarDTO verGrupo(@PathVariable Integer grupoId) {
+        GrupoListarDTO grupoListarDTO = grupoService.verGrupo(grupoId);
+        if (grupoListarDTO != null) {
+            return grupoListarDTO;
+        } else {
+            return null;
+        }
+    }
+
     @PostMapping("/nuevo")
     public GrupoCrearDTO crearGrupo(@RequestBody GrupoCrearDTO grupoCrearDTO) {
         GrupoCrearDTO grupoCreado = grupoService.saveGrupo(grupoCrearDTO);
@@ -27,9 +37,9 @@ public class GrupoController {
     }
 
 
-    @PutMapping("/{grupoId}/participantes/{participanteId}")
-    public AnyadirParticipanteDTO anyadirParticipante(@PathVariable Integer grupoId, @PathVariable Integer participanteId) {
-        AnyadirParticipanteDTO participante = grupoService.anyadirParticipanteGrupo(grupoId, participanteId);
+    @PutMapping("/{grupoId}/participantes/{usuarioId}")
+    public AnyadirUsuarioDTO anyadirParticipante(@PathVariable Integer grupoId, @PathVariable Integer usuarioId) {
+        AnyadirUsuarioDTO participante = grupoService.anyadirUsuarioGrupo(grupoId, usuarioId);
         if (participante != null) {
             return participante;
         } else {
@@ -39,8 +49,8 @@ public class GrupoController {
 
 
     @GetMapping("/{grupoId}/participantes")
-    public List<ParticipantesListarDTO> verParticipantesGrupo(@PathVariable Integer grupoId) {
-        List<ParticipantesListarDTO> participantes = grupoService.verParticipantesGrupo(grupoId);
+    public List<UsuariosListarDTO> verParticipantesGrupo(@PathVariable Integer grupoId) {
+        List<UsuariosListarDTO> participantes = grupoService.verUsuariosGrupo(grupoId);
         if (participantes != null) {
             return participantes;
         } else {
@@ -50,8 +60,8 @@ public class GrupoController {
 
 
     @DeleteMapping("/participantes/eliminar")
-    public List<ParticipantesListarDTO> eliminarParticipante(@RequestBody EliminarParticipanteDTO eliminarParticipanteDTO) {
-        return grupoService.eliminarParticipantesGrupo(eliminarParticipanteDTO);
+    public List<UsuariosListarDTO> eliminarParticipante(@RequestBody EliminarUsuarioDTO eliminarUsuarioDTO) {
+        return grupoService.eliminarUsuariosGrupo(eliminarUsuarioDTO);
     }
 
 
@@ -59,4 +69,13 @@ public class GrupoController {
     public List<GrupoListarDTO> listarGrupos(@PathVariable Integer idUsuario) {
         return grupoService.findGrupos(idUsuario);
     }
+
+
+
+    // grupo con id más alto
+    @GetMapping("/ultimo")
+    public GrupoId grupoUltimo() {
+        return grupoService.obtenerGrupoConIdMasAlto();
+    }
+
 }

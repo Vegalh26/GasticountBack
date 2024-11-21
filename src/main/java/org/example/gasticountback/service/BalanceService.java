@@ -1,49 +1,74 @@
 package org.example.gasticountback.service;
 
+import org.example.gasticountback.DTOs.CalcularBalanceDTO;
 import org.example.gasticountback.DTOs.VerBalanceDTO;
-import org.example.gasticountback.entity.Balance;
-import org.example.gasticountback.entity.Participante;
-import org.example.gasticountback.repository.IBalanceRepository;
-import org.example.gasticountback.repository.IParticipanteRepository;
+import org.example.gasticountback.entity.Gasto;
+import org.example.gasticountback.entity.Usuario;
+import org.example.gasticountback.repository.IGastoRepository;
+import org.example.gasticountback.repository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class BalanceService {
+    @Autowired
+    private IGastoRepository gastoRepository;
 
     @Autowired
-    private IBalanceRepository balanceRepository;
+    private IUsuarioRepository usuarioRepository;
+/*
+    public List<VerBalanceDTO> calcularBalance(CalcularBalanceDTO calcularBalanceDTO) {
+        Integer grupoId = calcularBalanceDTO.getGrupoId();
+        List<Gasto> gastos = gastoRepository.findByGrupoId(grupoId);
+        List<Usuario> usuarios = usuarioRepository.findByGrupoId(grupoId);
 
-    @Autowired
-    private IParticipanteRepository participanteRepository;
+        Map<String, VerBalanceDTO> balances = new HashMap<>();
+        for (Usuario usuario : usuarios) {
+            balances.put(usuario.getNombre(), new VerBalanceDTO(usuario.getNombre(), 0.0));
+        }
 
-    public List<VerBalanceDTO> verBalances(Integer grupoId) {
-        List<Balance> balances = balanceRepository.findByGrupoId(grupoId);
-        List<Participante> participantes = participanteRepository.findByGrupoId(grupoId);
-        List<VerBalanceDTO> verBalanceDTOList = new ArrayList<>();
+        for (Gasto gasto : gastos) {
+            double share = gasto.getMonto() / gasto.getParticipantes().size();
+            for (Usuario participante : gasto.getParticipantes()) {
+                VerBalanceDTO balance = balances.get(participante.getNombre());
+                balance.setBalance(balance.getBalance() - share);
+            }
+            VerBalanceDTO balancePayer = balances.get(gasto.getPagador().getNombre());
+            balancePayer.setBalance(balancePayer.getBalance() + gasto.getMonto());
+        }
 
-        Participante participanteConId1 = participanteRepository.findById(1).orElse(null);
+        return new ArrayList<>(balances.values());
+    }
 
-        for (Balance balance : balances) {
-            for (Participante participanteDebe : balance.getParticipantesDebe()) {
-                VerBalanceDTO dto = new VerBalanceDTO();
-                dto.setNombre_participante_debe(participanteDebe.getNombre());
-                dto.setCantidad_debe(balance.getTotal());
+    public void simplifyDebts(List<VerBalanceDTO> balances) {
+        List<VerBalanceDTO> creditors = new ArrayList<>();
+        List<VerBalanceDTO> debtors = new ArrayList<>();
 
-                for (Participante participanteRecibe : balance.getParticipantesRecibe()) {
-                    dto.setNombre_participante_recibe(participanteRecibe.getNombre());
-                }
-
-                if (participanteConId1 != null) {
-                    dto.setNombre_participante_recibe(participanteConId1.getNombre());
-                }
-
-                verBalanceDTOList.add(dto);
+        for (VerBalanceDTO balance : balances) {
+            if (balance.getBalance() > 0) {
+                creditors.add(balance);
+            } else if (balance.getBalance() < 0) {
+                debtors.add(balance);
             }
         }
-        return verBalanceDTOList;
+
+        int i = 0, j = 0;
+        while (i < creditors.size() && j < debtors.size()) {
+            VerBalanceDTO creditor = creditors.get(i);
+            VerBalanceDTO debtor = debtors.get(j);
+
+            double amount = Math.min(creditor.getBalance(), -debtor.getBalance());
+
+            System.out.println(debtor.getNombre() + " paga $" + amount + " a " + creditor.getNombre());
+
+            creditor.setBalance(creditor.getBalance() - amount);
+            debtor.setBalance(debtor.getBalance() + amount);
+
+            if (creditor.getBalance() == 0) i++;
+            if (debtor.getBalance() == 0) j++;
+        }
     }
+ */
 }

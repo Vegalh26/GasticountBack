@@ -1,14 +1,11 @@
 package org.example.gasticountback.service;
 
 import org.example.gasticountback.DTOs.*;
-import org.example.gasticountback.entity.Gasto;
 import org.example.gasticountback.entity.Grupo;
-import org.example.gasticountback.entity.Participante;
 import org.example.gasticountback.entity.Usuario;
 import org.example.gasticountback.enumerar.Moneda;
 import org.example.gasticountback.repository.IGastoRepository;
 import org.example.gasticountback.repository.IGrupoRepository;
-import org.example.gasticountback.repository.IParticipanteRepository;
 import org.example.gasticountback.repository.IUsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +22,23 @@ public class GrupoService implements IGrupoService {
 
     @Autowired
     private IUsuarioRepository usuarioRepository;
-
-    @Autowired
-    private IParticipanteRepository participanteRepository;
-
+    
     @Autowired
     private IGastoRepository gastoRepository;
+
+
+    public GrupoListarDTO verGrupo(Integer grupoId) {
+        Grupo grupo = grupoRepository.findById(grupoId).orElse(null);
+        if (grupo != null) {
+            GrupoListarDTO grupoDetalleDTO = new GrupoListarDTO();
+            grupoDetalleDTO.setId(grupo.getId());
+            grupoDetalleDTO.setConcepto(grupo.getConcepto());
+            return grupoDetalleDTO;
+        } else {
+            return null;
+        }
+    }
+
 
     @Override
     public GrupoCrearDTO saveGrupo(GrupoCrearDTO grupoCrearDTO) {
@@ -50,59 +58,70 @@ public class GrupoService implements IGrupoService {
     }
 
 
-    public AnyadirParticipanteDTO anyadirParticipanteGrupo(Integer idGrupo, Integer idParticipante) {
+    public AnyadirUsuarioDTO anyadirUsuarioGrupo(Integer idGrupo, Integer idUsuario) {
         Grupo grupo = grupoRepository.findById(idGrupo).orElse(null);
-        Participante participante = participanteRepository.findById(idParticipante).orElse(null);
+        Usuario usuario = usuarioRepository.findById(idUsuario);
 
-        if (grupo != null && participante != null) {
-            participante.setGrupo(grupo);
-            participanteRepository.save(participante);
-            AnyadirParticipanteDTO anyadirParticipanteDTO = new AnyadirParticipanteDTO();
-            anyadirParticipanteDTO.setId(participante.getId());
-            anyadirParticipanteDTO.setNombre(participante.getNombre());
-            anyadirParticipanteDTO.setGrupoId(grupo.getId());
-            anyadirParticipanteDTO.setConcepto(grupo.getConcepto());
-            return anyadirParticipanteDTO;
+        if (grupo != null && usuario != null) {
+            usuario.getGrupos().add(grupo);
+            usuarioRepository.save(usuario);
+            System.out.println("Usuario añadido: ID = " + usuario.getId() + ", Nombre = " + usuario.getNombre() + ", Grupo = " + grupo.getConcepto());
+            AnyadirUsuarioDTO anyadirUsuarioDTO = new AnyadirUsuarioDTO();
+            anyadirUsuarioDTO.setId(usuario.getId());
+            anyadirUsuarioDTO.setNombre(usuario.getNombre());
+            anyadirUsuarioDTO.setGrupoId(grupo.getId());
+            anyadirUsuarioDTO.setConcepto(grupo.getConcepto());
+            return anyadirUsuarioDTO;
         } else {
             return null;
         }
     }
 
 
-    public List<ParticipantesListarDTO> verParticipantesGrupo(Integer idGrupo) {
+    public List<UsuariosListarDTO> verUsuariosGrupo(Integer idGrupo) {
         Grupo grupo = grupoRepository.findById(idGrupo).orElse(null);
         if (grupo != null) {
-            Set<Participante> participantes = grupo.getParticipantes();
-            List<ParticipantesListarDTO> participantesListarDTOS = new ArrayList<>();
+            Set<Usuario> usuarios = grupo.getUsuarios();
+            List<UsuariosListarDTO> usuariosListarDTOS = new ArrayList<UsuariosListarDTO>();
 
-            for (Participante participante : participantes) {
-                ParticipantesListarDTO participantesListarDTO = new ParticipantesListarDTO();
-                participantesListarDTO.setConcepto(grupo.getConcepto());
-                participantesListarDTO.setNombreParticipante(participante.getNombre());
-                participantesListarDTOS.add(participantesListarDTO);
+            // for para mos
+            for (Usuario usuario : usuarios) {
+                UsuariosListarDTO usuariosListarDTO = new UsuariosListarDTO();
+                usuariosListarDTO.setId(usuario.getId());
+                usuariosListarDTO.setNombreUsuario(usuario.getNombre());
+                usuariosListarDTO.setFoto(usuario.getFoto());
+                usuariosListarDTOS.add(usuariosListarDTO);
             }
 
-            return participantesListarDTOS;
+            return usuariosListarDTOS;
         } else {
             return null;
         }
     }
 
 
-    public List<ParticipantesListarDTO> eliminarParticipantesGrupo(EliminarParticipanteDTO eliminarParticipanteDTO) {
-        Integer idGrupo = eliminarParticipanteDTO.getGrupoId();
-        Integer idParticipante = eliminarParticipanteDTO.getParticipanteId();
+    public List<UsuariosListarDTO> eliminarUsuariosGrupo(EliminarUsuarioDTO eliminarUsuarioDTO) {
+        Grupo grupo = grupoRepository.findById(eliminarUsuarioDTO.getGrupoId()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(eliminarUsuarioDTO.getUsuarioId());
 
-        Grupo grupo = grupoRepository.findById(idGrupo).orElse(null);
-        Participante participante = participanteRepository.findById(idParticipante).orElse(null);
+        if (grupo != null && usuario != null) {
+            usuario.getGrupos().remove(grupo);
+            usuarioRepository.save(usuario);
+            System.out.println("Usuario eliminado: ID = " + usuario.getId() + ", Nombre = " + usuario.getNombre() + ", Grupo = " + grupo.getConcepto());
+            Set<Usuario> usuarios = grupo.getUsuarios();
+            List<UsuariosListarDTO> usuariosListarDTOS = new ArrayList<UsuariosListarDTO>();
 
-        if (grupo != null && participante != null && participante.getGrupo().equals(grupo)) {
-            participante.setGrupo(null);
-            participanteRepository.save(participante);
-            System.out.println("Participante eliminado: ID = " + participante.getId() + ", Nombre = " + participante.getNombre() + ", Grupo = " + grupo.getConcepto());
+            for (Usuario usuario1 : usuarios) {
+                UsuariosListarDTO usuariosListarDTO = new UsuariosListarDTO();
+                usuariosListarDTO.setId(usuario1.getId());
+                usuariosListarDTO.setNombreUsuario(usuario1.getNombre());
+                usuariosListarDTOS.add(usuariosListarDTO);
+            }
+
+            return usuariosListarDTOS;
+        } else {
+            return null;
         }
-
-        return verParticipantesGrupo(idGrupo);
     }
 
 
@@ -110,7 +129,7 @@ public class GrupoService implements IGrupoService {
     public List<GrupoListarDTO> findGrupos(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario);
         if (usuario != null) {
-            List<Grupo> grupos = usuario.getGrupos();
+            Set<Grupo> grupos = usuario.getGrupos();
             List<GrupoListarDTO> grupoListarDTOS = new ArrayList<GrupoListarDTO>();
 
             for (Grupo grupo : grupos) {
@@ -125,4 +144,18 @@ public class GrupoService implements IGrupoService {
             return null;
         }
     }
+
+
+    public GrupoId obtenerGrupoConIdMasAlto() {
+        List<Grupo> grupos = grupoRepository.findAll();
+        Integer idMasAlto = 0;
+        for (Grupo grupo : grupos) {
+            if (grupo.getId() > idMasAlto) {
+                idMasAlto = grupo.getId();
+            }
+        }
+        GrupoId grupoId = new GrupoId(idMasAlto);
+        return grupoId;
+    }
+
 }

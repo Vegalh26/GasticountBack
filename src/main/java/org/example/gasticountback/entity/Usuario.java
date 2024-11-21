@@ -42,11 +42,10 @@ public class Usuario {
     @Column(name="password")
     private String password;
 
-    // Relación de uno a uno con la tabla participantes
-    // (un usuario solo puede tener un participante / un participante solo puede tener un usuario)
-    @OneToOne(mappedBy = "usuario", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
-    private Participante participante;
+    @Column(name="foto")
+    private String foto;
 
+    // TODO Tabla amigos
     // Relación de uno a muchos con la tabla amigos
     // (un usuario puede tener muchos amigos / una relación de amigo solo puede tener un usuario)
     @OneToMany(mappedBy = "usuario", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
@@ -57,6 +56,7 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
     private Set<Amigo> amigos2;
 
+    // TODO: Tabla grupos
     // Relación de muchos a muchos con la tabla grupos
     // (un usuario puede pertenecer a muchos grupos / un grupo puede tener muchos usuarios)
     @ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
@@ -65,5 +65,12 @@ public class Usuario {
             joinColumns = @JoinColumn(name = "usuario_id"),
             inverseJoinColumns = @JoinColumn(name = "grupo_id")
     )
-    private List<Grupo> grupos;
+    private Set<Grupo> grupos;
+
+    // TODO Tabla balances
+    @OneToMany(mappedBy = "deudor")  // Relación con la propiedad 'deudor' de la clase Balance
+    private List<Balance> balancesComoDeudor;
+
+    @OneToMany(mappedBy = "pertenecedor")  // Relación con la propiedad 'pertenecedor' de la clase Balance
+    private List<Balance> balancesComoPertenecedor;
 }

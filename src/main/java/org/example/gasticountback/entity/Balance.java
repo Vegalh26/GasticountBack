@@ -27,23 +27,15 @@ public class Balance {
     @Column(name="total", nullable=false)
     private Double total;
 
-    @ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
-    @JoinTable(
-            name = "balance_participante_debe",
-            joinColumns = @JoinColumn(name = "balance_id"),
-            inverseJoinColumns = @JoinColumn(name = "participante_id")
-    )
-    private List<Participante> participantesDebe;
-
-    @ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
-    @JoinTable(
-            name = "balance_participante_recibe",
-            joinColumns = @JoinColumn(name = "balance_id"),
-            inverseJoinColumns = @JoinColumn(name = "participante_id")
-    )
-    private List<Participante> participantesRecibe;
-
-    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, targetEntity = Grupo.class)
-    @JoinColumn(name="id_grupo", referencedColumnName = "id")
+    @ManyToOne
+    @JoinColumn(name="grupo_id", nullable=false)
     private Grupo grupo;
+
+    @ManyToOne
+    @JoinColumn(name = "deudor_id", nullable = false)
+    private Usuario deudor;
+
+    @ManyToOne
+    @JoinColumn(name = "pertenecedor_id", nullable = false)
+    private Usuario pertenecedor;
 }

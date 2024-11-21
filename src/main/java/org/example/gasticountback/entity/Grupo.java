@@ -8,6 +8,7 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import org.example.gasticountback.enumerar.Moneda;
 
+import java.util.List;
 import java.util.Set;
 
 
@@ -31,6 +32,18 @@ public class Grupo {
     @Column(name="moneda", nullable=false)
     private Moneda moneda;
 
-    @OneToMany(mappedBy="grupo", fetch=FetchType.LAZY)
-    private Set<Participante> participantes;
+    // TODO: Tabla balances
+    @OneToMany(mappedBy = "grupo", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+    private List<Balance> balances;
+
+    // TODO: Tabla usuarios
+    // Relación de muchos a muchos con la tabla USUARIOS
+    // (un grupo puede tener muchos usuarios / un usuario puede pertenecer a muchos grupos)
+    @ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+    @JoinTable(
+            name = "usuario_grupo",
+            joinColumns = @JoinColumn(name = "grupo_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private Set<Usuario> usuarios;
 }

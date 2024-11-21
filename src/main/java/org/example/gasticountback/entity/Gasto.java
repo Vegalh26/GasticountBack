@@ -32,14 +32,14 @@ public class Gasto {
     @Column(name="precio", nullable=false)
     private Double precio;
 
-    @Column(name="fecha", nullable=false)
+    @Column(name="fecha")
     private String fecha;
 
     // Relación de muchos a uno con la tabla participantes
     // (un gasto solo puede tener un participante / un participante puede tener muchos gastos)
-    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, targetEntity = Participante.class)
-    @JoinColumn(name="id_participante", referencedColumnName = "id")
-    private Participante participante;
+    @ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST, targetEntity = Usuario.class)
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id", nullable = false)
+    private Usuario usuario;
 
     //Relación de muchos a uno con la tabla grupos
     // (un gasto solo puede tener un grupo / un grupo puede tener muchos gastos)
