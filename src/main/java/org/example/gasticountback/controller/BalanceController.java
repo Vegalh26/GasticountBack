@@ -2,6 +2,7 @@ package org.example.gasticountback.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.gasticountback.DTOs.CalcularBalanceDTO;
+import org.example.gasticountback.DTOs.UsuarioBalanceDTO;
 import org.example.gasticountback.DTOs.VerBalanceDTO;
 import org.example.gasticountback.service.BalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,4 +26,9 @@ public class BalanceController {
         return balanceService.calcularBalance(calcularBalanceDTO);
     }
     */
+
+    @GetMapping("/{grupoId}")
+    public List<UsuarioBalanceDTO> getBalancesPorGrupo(@PathVariable Integer grupoId) {
+        return balanceService.calcularBalancesPorGrupo(grupoId);
+    }
 }

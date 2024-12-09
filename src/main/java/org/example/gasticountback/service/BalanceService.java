@@ -1,6 +1,7 @@
 package org.example.gasticountback.service;
 
 import org.example.gasticountback.DTOs.CalcularBalanceDTO;
+import org.example.gasticountback.DTOs.UsuarioBalanceDTO;
 import org.example.gasticountback.DTOs.VerBalanceDTO;
 import org.example.gasticountback.entity.Gasto;
 import org.example.gasticountback.entity.Usuario;
@@ -18,6 +19,44 @@ public class BalanceService {
 
     @Autowired
     private IUsuarioRepository usuarioRepository;
+
+
+    public List<UsuarioBalanceDTO> calcularBalancesPorGrupo(Integer grupoId) {
+        List<Gasto> gastosGrupo = gastoRepository.findByGrupoId(grupoId);
+        List<Usuario> usuarios = usuarioRepository.findByGrupos_Id(grupoId);
+
+        double totalGastosGrupo = gastosGrupo.stream().mapToDouble(Gasto::getPrecio).sum();
+        int numeroUsuarios = usuarios.size();
+
+        if (numeroUsuarios == 0) {
+            throw new IllegalArgumentException("El grupo no tiene usuarios.");
+        }
+
+        double balancePorUsuario = totalGastosGrupo / numeroUsuarios;
+
+        List<UsuarioBalanceDTO> balances = new ArrayList<>();
+        for (Usuario usuario : usuarios) {
+            List<Gasto> gastosUsuario = gastoRepository.findByUsuarioIdAndGrupoId(usuario.getId(), grupoId);
+            double totalGastosUsuario = gastosUsuario.stream().mapToDouble(Gasto::getPrecio).sum();
+            double balance = balancePorUsuario - totalGastosUsuario;
+
+            String mensaje;
+            if (balance < 0) {
+                mensaje = "Le Deben ";
+                balance = -balance;
+            } else if (balance > 0) {
+                mensaje = "Debe ";
+            } else {
+                mensaje = "Estás en paz y a salvo";
+            }
+            double balanceFormateado = Math.round(balance * 100.0) / 100.0;
+            balances.add(new UsuarioBalanceDTO(usuario.getNombre(), mensaje, balanceFormateado, usuario.getFoto()));
+        }
+
+        return balances;
+    }
+
+
 /*
     public List<VerBalanceDTO> calcularBalance(CalcularBalanceDTO calcularBalanceDTO) {
         Integer grupoId = calcularBalanceDTO.getGrupoId();

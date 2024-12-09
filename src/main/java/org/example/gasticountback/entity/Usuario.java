@@ -68,9 +68,6 @@ public class Usuario {
     private Set<Grupo> grupos;
 
     // TODO Tabla balances
-    @OneToMany(mappedBy = "deudor")  // Relación con la propiedad 'deudor' de la clase Balance
-    private List<Balance> balancesComoDeudor;
-
-    @OneToMany(mappedBy = "pertenecedor")  // Relación con la propiedad 'pertenecedor' de la clase Balance
-    private List<Balance> balancesComoPertenecedor;
+    @OneToMany(mappedBy = "usuario", fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+    private List<Balance> balances;
 }

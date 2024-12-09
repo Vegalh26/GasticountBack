@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface IGastoRepository extends JpaRepository<Gasto, Integer> {
     List<Gasto> findByGrupoId(Integer grupoId);
+
+    List<Gasto> findByUsuarioIdAndGrupoId(Integer usuarioId, Integer grupoId);
 }

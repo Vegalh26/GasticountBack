@@ -31,11 +31,8 @@ public class Balance {
     @JoinColumn(name="grupo_id", nullable=false)
     private Grupo grupo;
 
+    // Usuario
     @ManyToOne
-    @JoinColumn(name = "deudor_id", nullable = false)
-    private Usuario deudor;
-
-    @ManyToOne
-    @JoinColumn(name = "pertenecedor_id", nullable = false)
-    private Usuario pertenecedor;
+    @JoinColumn(name="usuario_id", nullable=false)
+    private Usuario usuario;
 }

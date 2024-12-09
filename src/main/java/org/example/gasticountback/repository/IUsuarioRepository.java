@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 public interface IUsuarioRepository extends JpaRepository<Usuario, String> {
     Usuario findById(Integer idUsuario);
+
+    List<Usuario> findByGrupos_Id(Integer grupoId);
 }
